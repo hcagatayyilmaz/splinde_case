@@ -1,4 +1,4 @@
-import {MyTreeView} from "./components/TreeView"
+import {MyTreeView} from "../components/TreeView"
 import {TreeDataProvider} from "@/contexts/TreeDataContext"
 
 export default function Home() {

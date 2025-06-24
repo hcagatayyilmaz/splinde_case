@@ -1,7 +1,7 @@
 "use client"
 
 import {useState} from "react"
-import {Input} from "@/app/ui/components/input"
+import {Input} from "@/ui/components/input"
 
 interface EditableInputProps {
   value: number | string

@@ -1,7 +1,7 @@
 "use client"
 
 import {useState, useEffect} from "react"
-import {TreeView, type TreeDataItem} from "@/app/ui/components/tree-view"
+import {TreeView, type TreeDataItem} from "@/ui/components/tree-view"
 import {Section, Entry} from "@/constants/types"
 import {EditableInput} from "./EditableInput"
 import {useTreeDataContext} from "@/contexts/TreeDataContext"

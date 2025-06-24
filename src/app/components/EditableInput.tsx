@@ -4,17 +4,18 @@ import {useState} from "react"
 import {Input} from "@/app/ui/components/input"
 
 interface EditableInputProps {
-  value: number
-  onSave: (newValue: number) => void
+  value: number | string
+  onSave: (newValue: number | string) => void
+  type?: "number" | "text"
   className?: string
 }
 
-export function EditableInput({value, onSave, className}: EditableInputProps) {
+export function EditableInput({value, onSave, type = "number", className}: EditableInputProps) {
   const [inputValue, setInputValue] = useState(value.toString())
 
   const handleSave = () => {
-    const newValue = parseInt(inputValue) || 0
-    console.log("EditableInput saving:", newValue)
+    const newValue = type === "number" ? parseInt(inputValue) || 0 : inputValue
+    console.log("EditableInput saving:", newValue, "type:", type)
     onSave(newValue)
   }
 
@@ -33,7 +34,7 @@ export function EditableInput({value, onSave, className}: EditableInputProps) {
       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
       onKeyDown={handleKeyDown}
       onBlur={handleSave}
-      className={`w-16 h-6 text-xs bg-white border border-gray-300 text-black focus:border-black focus:ring-0 ${className}`}
+      className={`w-16 h-6 text-xs bg-white border-2 border-black text-black focus:border-gray-800 focus:ring-1 focus:ring-gray-800 shadow-sm ${className}`}
       autoFocus
     />
   )

@@ -8,6 +8,7 @@ import {demoData} from "@/constants/data"
 interface TreeDataContextType {
   data: Section | null
   updateEntry: (path: string[], newSum: number) => void
+  updateEntryName: (path: string[], newName: string) => void
   deleteEntry: (path: string[]) => void
   setData: (data: Section | null) => void
   isLoading: boolean
@@ -24,11 +25,12 @@ export function TreeDataProvider({children, initialData}: TreeDataProviderProps)
   const [data, setData] = useState<Section | null>(initialData || null)
   const [isLoading, setIsLoading] = useState(!initialData)
 
-  // Fetch data if no initialData provided
+  // Fetch data
   useEffect(() => {
     if (!initialData) {
       const fetchData = async () => {
         try {
+          //
           const response = await axios.get("http://localhost:3000/api/sections", {
             timeout: 5000 // 5 second timeout
           })
@@ -36,9 +38,7 @@ export function TreeDataProvider({children, initialData}: TreeDataProviderProps)
           setData(response.data)
           console.log("Data fetched successfully from API")
         } catch (error) {
-          // Fallback to local data if fetch fails
-          console.log("API fetch failed, using local data:", error)
-          setData(demoData)
+          console.log("API fetch failed", error)
         } finally {
           setIsLoading(false)
         }
@@ -81,6 +81,52 @@ export function TreeDataProvider({children, initialData}: TreeDataProviderProps)
     setData(newData)
   }
 
+  const updateEntryName = (path: string[], newName: string): void => {
+    if (!data) return
+    console.log(
+      "Context updateEntryName called for:",
+      path.length === 0 ? "ROOT" : path.join(" > "),
+      "new name:",
+      newName
+    )
+
+    const updateEntryNameRecursive = (data: Section, path: string[], newName: string): Section => {
+      // Handle root level name change
+      if (path.length === 0) {
+        return {
+          ...data,
+          name: newName
+        }
+      }
+
+      if (path.length === 1) {
+        return {
+          ...data,
+          children: data.children.map((child) => {
+            if (child.name === path[0]) {
+              return {...child, name: newName}
+            }
+            return child
+          })
+        }
+      } else {
+        return {
+          ...data,
+          children: data.children.map((child) => {
+            if (child.name === path[0] && "children" in child) {
+              return updateEntryNameRecursive(child, path.slice(1), newName)
+            }
+            return child
+          })
+        }
+      }
+    }
+
+    const newData = data ? updateEntryNameRecursive(data, path, newName) : null
+    console.log("Context setting new data after name update:", newData)
+    setData(newData)
+  }
+
   const deleteEntry = (path: string[]): void => {
     if (!data) return
     console.log("Context deleteEntry called:", path)
@@ -110,7 +156,9 @@ export function TreeDataProvider({children, initialData}: TreeDataProviderProps)
   }
 
   return (
-    <TreeDataContext.Provider value={{data, updateEntry, deleteEntry, setData, isLoading}}>
+    <TreeDataContext.Provider
+      value={{data, updateEntry, updateEntryName, deleteEntry, setData, isLoading}}
+    >
       {children}
     </TreeDataContext.Provider>
   )

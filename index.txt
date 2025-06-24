@@ -1,0 +1,133 @@
+/* 
+Welcome to our small coding challenge for the position of full stack developer at Splinde.
+This task of developing a prototype is timeboxed and should be completed within roughly ~3 hours.
+Please do not overspend time. We want to see how you work with constraints, not how much overtime you are willing to invest.
+
+Below we provide you some demo data which you should serve via an API and render in the browser via React.
+Which tools or frameworks you use beside Typescript and React is up to you.
+Do not modify the demoData. Design the frontend in such a way, that deeper nested trees may be rendered. 
+It is up to you to modify the types if needed. 
+Please create a git repository and push it to a public git respository and send us the link when you are done.
+Also provide a brief README file with instructions how to install and run your app.
+In the technical interview you can present your solution and we can discuss your decisions.
+
+Must haves:
+- Create backend endpoint that serves the demoData (Can be a static JSON endpoint or simple in-memory API)
+- Compute computedSum of sections and the total sum and render the total sum (frontend or backend)
+- Create frontend and render sections with computed sums
+- If users edit a sum of an entry (onBlur), the computed sums should be updated (frontend only)
+- Users can edit notes
+
+Optional tasks (If time left pick tasks you like or get creative):
+- Make the UI look nice :)
+- Create docker compose setup
+- Collapse/expand sections (Frontend only)
+- Add/remove entries/sections (Frontend only)
+- ...
+
+Types and Demodata: 
+*/
+
+type TreeNode = {
+    name: string
+}
+
+type Entry = TreeNode & {
+    note: string
+    sum: number
+}
+
+type Section = TreeNode & {
+    children: (Entry | Section)[]
+}
+
+type ComputedSection = TreeNode & {
+    children: (Entry | ComputedSection)[]
+    computedSum: number
+}
+
+const demoData: Section = {
+    name: "Annual Report",
+    children: [
+        {
+            name: "Sales",
+            children: [
+                {
+                    name: "Q1 Sales",
+                    sum: 120,
+                    note: "Strong performance in North America",
+                },
+                {
+                    name: "Q2 Sales",
+                    sum: 140,
+                    note: "European market showed slight growth",
+                },
+                {
+                    name: "Q3 Sales",
+                    sum: 110,
+                    note: "Asia-Pacific underperformed expectations",
+                },
+                {
+                    name: "Q4 Sales",
+                    sum: 130,
+                    note: "Holiday promotions boosted revenue",
+                },
+            ],
+        },
+        {
+            name: "Marketing",
+            children: [
+                {
+                    name: "Digital Campaigns",
+                    sum: 180,
+                    note: "Social media ads had the highest ROI",
+                },
+                {
+                    name: "Event Sponsorships",
+                    sum: 120,
+                    note: "Sponsored 5 major industry events",
+                },
+            ],
+        },
+        {
+            name: "R&D",
+            children: [
+                {
+                    name: "New Product Development",
+                    sum: 150,
+                    note: "Three prototypes developed and tested",
+                },
+                {
+                    name: "Innovation Lab",
+                    sum: 100,
+                    note: "Ongoing AI-based experimentation",
+                },
+            ],
+        },
+        {
+            name: "Operations",
+            children: [
+                {
+                    name: "HR",
+                    children: [
+                        {
+                            name: "HR tool",
+                            sum: 20,
+                            note: "Yearly cost to manage roles and applicants"
+                        }
+                    ]
+                },
+                {
+                    name: "Logistics",
+                    sum: 90,
+                    note: "Improved efficiency through route optimization",
+                },
+                {
+                    name: "Customer Support",
+                    sum: 60,
+                    note: "Reduced average resolution time by 15%",
+                },
+            ],
+        },
+    ],
+};

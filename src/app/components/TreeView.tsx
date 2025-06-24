@@ -1,40 +1,40 @@
 "use client"
 
-// Import the shadcn component
+import {useState} from "react"
 import {TreeView, type TreeDataItem} from "@/app/ui/components/tree-view"
 import {Section, Entry} from "@/data/types"
+import {EditableInput} from "./EditableInput"
 
 function computeSum(item: Section | Entry): number {
   if ("children" in item) {
-    // It's a Section - sum all children recursively
     return item.children.reduce((total, child) => total + computeSum(child), 0)
   } else {
-    // It's an Entry - return its sum value
     return item.sum
   }
 }
 
-// Create a function to transform your data
-function transformToTreeData(item: Section | Entry, parentPath = ""): TreeDataItem {
-  const id = parentPath
-    ? `${parentPath}/${item.name.toLowerCase().replace(/\s+/g, "-")}`
-    : item.name.toLowerCase().replace(/\s+/g, "-")
-
-  const totalSum = computeSum(item)
-
-  // Check if item is a Section (has children) or Entry (has sum)
-  if ("children" in item) {
-    // It's a Section
+function updateEntrySum(data: Section, path: string[], newSum: number): Section {
+  if (path.length === 1) {
+    // We're at the target level, find and update the entry
     return {
-      id,
-      name: `${item.name} (${totalSum})`,
-      children: item.children.map((child) => transformToTreeData(child, id))
+      ...data,
+      children: data.children.map((child) => {
+        if (child.name === path[0] && "sum" in child) {
+          return {...child, sum: newSum}
+        }
+        return child
+      })
     }
   } else {
-    // It's an Entry
+    // Continue traversing down the path
     return {
-      id,
-      name: `${item.name} (${item.sum})`
+      ...data,
+      children: data.children.map((child) => {
+        if (child.name === path[0] && "children" in child) {
+          return updateEntrySum(child, path.slice(1), newSum)
+        }
+        return child
+      })
     }
   }
 }
@@ -43,13 +43,55 @@ interface MyTreeViewProps {
   data: Section
 }
 
-// Create your component
-export function MyTreeView({data}: MyTreeViewProps) {
+export function MyTreeView({data: initialData}: MyTreeViewProps) {
+  const [data, setData] = useState(initialData)
+  const [editingId, setEditingId] = useState<string | null>(null)
+
+  const handleSumUpdate = (path: string[], newSum: number) => {
+    const updatedData = updateEntrySum(data, path, newSum)
+    setData(updatedData)
+    setEditingId(null) // Stop editing after save
+  }
+
+  const transformToTreeData = (item: Section | Entry, parentPath: string[] = []): TreeDataItem => {
+    const id = [...parentPath, item.name].join("/").toLowerCase().replace(/\s+/g, "-")
+    const currentPath = [...parentPath, item.name]
+
+    if ("children" in item) {
+      // It's a Section - show name with computed total (not editable)
+      const totalSum = computeSum(item)
+      return {
+        id,
+        name: `${item.name} (${totalSum})`,
+        children: item.children.map((child) => transformToTreeData(child, currentPath))
+      }
+    } else {
+      // It's an Entry - show name with sum, clickable to edit
+      const isEditing = editingId === id
+
+      return {
+        id,
+        name: `${item.name} (${item.sum})`,
+        actions: isEditing ? (
+          <EditableInput
+            value={item.sum}
+            onSave={(newSum) => handleSumUpdate(currentPath, newSum)}
+          />
+        ) : undefined,
+        onClick: () => {
+          if (!isEditing) {
+            setEditingId(id)
+          }
+        }
+      }
+    }
+  }
+
   const treeData = transformToTreeData(data)
 
   return (
     <div className='w-full'>
-      <TreeView data={treeData} className='w-full border rounded-lg p-4' />
+      <TreeView data={treeData} className='w-full border rounded-lg p-4' expandAll={true} />
     </div>
   )
 }

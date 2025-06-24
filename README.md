@@ -20,9 +20,11 @@ Context API: Shared state management
 
 Adding TanStack React Query for better data fetching.
 
-## 🚀 Running the Project
+## Running the Project
 
 ### Method 1: Local Development
+
+**Requirements**: Node.js 18+ and npm
 
 ```bash
 # Install dependencies
@@ -36,6 +38,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Method 2: Docker
 
+**Requirements**: Docker installed
+
 ```bash
 # Build and run with Docker
 docker build -t tree-view-app .
@@ -44,27 +48,11 @@ docker run -p 3000:3000 tree-view-app
 
 ### Method 3: Docker Compose (Recommended)
 
+**Requirements**: Docker and Docker Compose installed
+
 ```bash
 # Build and run with docker-compose
 docker-compose up --build
 ```
 
 The application will be available at [http://localhost:3000](http://localhost:3000)
-
-## Features
-
-- **Interactive Tree View**: Navigate through hierarchical data
-- **Edit Values**: Click "Edit" to modify entry values
-- **Edit Names**: Click any name to rename sections/entries
-- **Delete Entries**: Click "×" to remove entries
-- **Auto-computed Sums**: Parent totals update automatically
-- **Responsive Design**: Works on desktop and mobile
-- **Context API**: Shared state management
-
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js 14 with TypeScript
-- **UI Components**: Shadcn/ui with Tree View
-- **State Management**: React Context API
-- **Styling**: Tailwind CSS
-- **Containerization**: Docker & Docker Compose

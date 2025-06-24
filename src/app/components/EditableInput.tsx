@@ -10,13 +10,12 @@ interface EditableInputProps {
 }
 
 export function EditableInput({value, onSave, className}: EditableInputProps) {
-  const [isEditing, setIsEditing] = useState(false)
   const [inputValue, setInputValue] = useState(value.toString())
 
   const handleSave = () => {
     const newValue = parseInt(inputValue) || 0
+    console.log("EditableInput saving:", newValue)
     onSave(newValue)
-    setIsEditing(false)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -25,32 +24,17 @@ export function EditableInput({value, onSave, className}: EditableInputProps) {
     }
     if (e.key === "Escape") {
       setInputValue(value.toString())
-      setIsEditing(false)
     }
   }
 
-  if (isEditing) {
-    return (
-      <Input
-        value={inputValue}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onBlur={handleSave}
-        className='w-16 h-6 text-xs inline-block'
-        autoFocus
-      />
-    )
-  }
-
   return (
-    <span
-      className={`cursor-pointer hover:bg-accent hover:text-accent-foreground px-1 rounded transition-colors ${className}`}
-      onClick={() => {
-        setIsEditing(true)
-        setInputValue(value.toString())
-      }}
-    >
-      {"Edit"}
-    </span>
+    <Input
+      value={inputValue}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
+      onKeyDown={handleKeyDown}
+      onBlur={handleSave}
+      className={`w-16 h-6 text-xs bg-white border border-gray-300 text-black focus:border-black focus:ring-0 ${className}`}
+      autoFocus
+    />
   )
 }

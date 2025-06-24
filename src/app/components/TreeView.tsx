@@ -18,7 +18,6 @@ export function MyTreeView() {
   const {data, updateEntry, deleteEntry, isLoading} = useTreeDataContext()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [treeData, setTreeData] = useState<TreeDataItem | null>(null)
-  const [dataVersion, setDataVersion] = useState(0)
 
   const handleSumUpdate = (path: string[], newSum: number) => {
     console.log("Updating sum:", path, newSum)
@@ -92,7 +91,7 @@ export function MyTreeView() {
     if (data) {
       const transformed = transformToTreeData(data)
       setTreeData(transformed)
-      setDataVersion((prev) => prev + 1) // Force re-render
+
       console.log("TreeView data transformed:", transformed)
     }
   }, [data, editingId]) // Re-transform when data or editing state changes
@@ -103,11 +102,7 @@ export function MyTreeView() {
 
   return (
     <div className='w-full'>
-      <TreeView
-        key={`tree-${dataVersion}`}
-        data={treeData}
-        className='w-full border rounded-lg p-4'
-      />
+      <TreeView data={treeData} className='w-full border rounded-lg p-4' />
     </div>
   )
 }
